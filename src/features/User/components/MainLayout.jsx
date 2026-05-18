@@ -1,5 +1,7 @@
 import React from 'react';
 import logoImg from '../../../assets/top_icon.png';
+import { Plus, LogIn, UserPlus, LogOut, Phone } from 'lucide-react';
+
 import '../Style/MainLayout.css';
 
 const MainLayout = ({ 
@@ -10,6 +12,7 @@ const MainLayout = ({
   onRegisterClick, 
   onNewOrderClick, 
   onLoginClick, 
+  onLogout,
   onProfileClick,
   onOrdersClick,
   onPricingClick 
@@ -42,12 +45,15 @@ const MainLayout = ({
                   <button className="btn-white-outline" onClick={onLoginClick}>התחברות</button>
                 </>
               )} */}
-              {!currentUser && (
-  <>
-    <button className="btn-white-outline" onClick={onRegisterClick}>הרשמה</button>
-    <button className="btn-white-outline" onClick={onLoginClick}>התחברות</button>
-  </>
-)}
+            {!currentUser ? (
+                <>
+                  <button className="btn-white-outline" onClick={onRegisterClick}>הרשמה</button>
+                  <button className="btn-white-outline" onClick={onLoginClick}>התחברות</button>
+                </>
+              ) : (
+                // כפתור התנתקות שיופיע רק אם המשתמש מחובר
+                <button className="btn-white-outline" onClick={onLogout}>התנתקות</button>
+              )}
             </div>
           </div>
         </div>

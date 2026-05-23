@@ -51,7 +51,7 @@ const GoogleMapWithClusters = ({ carsList = [], onCarSelect, onRouteConfirm }) =
     const mapRef = useRef(null);
 
     // API Calls
-const { data: closestCarsFromServer, isFetching } = useGetClosestCarsQuery(
+const { data: closestCarsFromServer, isFetching,isLoading  } = useGetClosestCarsQuery(
     { 
         lat: userLocation?.lat, 
         lng: userLocation?.lng,
@@ -170,27 +170,54 @@ const { data: closestCarsFromServer, isFetching } = useGetClosestCarsQuery(
                             </div>
                         ) : showGridFull ? (
                             /* Step 2: Car List */
-                            <div className="grid-full">
-                                {isFetching ? (
-                                    <div className="loading-overlay">מחשב רכבים קרובים...</div>
-                                ) : (
-                                    <CarSelectionList
-                                        cars={processedCars}
-                                        selectedTime={orderPayload}
-                                        onEditTime={(car) => {
-                                            setSelectedCar(car);
-                                            setEditingTimeFromCarModal(true);
-                                            setShowSidePanel(true);
-                                        }}
-                                        onSelectCar={(car) => {
-                                            setSelectedCar(car);
-                                            setCompletedSteps(prev => [...new Set([...prev, 2])]);
-                                            setCurrentStep(3);
-                                            if (onCarSelect) onCarSelect(car);
-                                        }}
-                                    />
-                                )}
-                            </div>
+            //                 <div className="grid-full">
+            //                     {isFetching ? (
+            //                         <div className="loading-overlay">מחשב רכבים קרובים...</div>
+            //                     ) : (
+            //                         <CarSelectionList
+            //                             cars={processedCars}
+            //                             selectedTime={orderPayload}
+            //                             userLat={userLocation?.lat} 
+            // userLng={userLocation?.lng}  
+            //                             onEditTime={(car) => {
+            //                                 setSelectedCar(car);
+            //                                 setEditingTimeFromCarModal(true);
+            //                                 setShowSidePanel(true);
+            //                             }}
+            //                             onSelectCar={(car) => {
+            //                                 setSelectedCar(car);
+            //                                 setCompletedSteps(prev => [...new Set([...prev, 2])]);
+            //                                 setCurrentStep(3);
+            //                                 if (onCarSelect) onCarSelect(car);
+            //                             }}
+            //                         />
+            //                     )}
+            /* Step 2: Car List */
+/* Step 2: Car List */
+<div className="grid-full">
+    {/* שינוי קריטי: isLoading בודק רק את הפעם הראשונה. isFetching קורה בכל פול שקט */}
+    {isLoading && !closestCarsFromServer ? ( 
+        <div className="loading-overlay-full">מחשב רכבים קרובים...</div>
+    ) : (
+        <CarSelectionList
+            // אנחנו כבר לא צריכים להעביר את processedCars כי CarSelectionList מושך לבד
+            selectedTime={orderPayload}
+            userLat={userLocation?.lat} 
+            userLng={userLocation?.lng}  
+            onEditTime={(car) => {
+                setSelectedCar(car);
+                setEditingTimeFromCarModal(true);
+                setShowSidePanel(true);
+            }}
+            onSelectCar={(car) => {
+                setSelectedCar(car);
+                setCompletedSteps(prev => [...new Set([...prev, 2])]);
+                setCurrentStep(3);
+                if (onCarSelect) onCarSelect(car);
+            }}
+        />
+    )}
+</div>
                         ) : (
                             /* Step 1: Map View */
                             <div className="map-view">

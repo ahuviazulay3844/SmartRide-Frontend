@@ -187,22 +187,7 @@ const CarSelectionList = ({ cars, onSelectCar, onEditTime, selectedTime, userLat
     skip: !userLat || !userLng
   });
 
-  // const getStatusInfo = (status) => {
-  // // בדיקה אם הנהג מאחר (לצורך תצוגה בלבד)
-  //   const isLate = car?.blockingOrderEnd && new Date(car.blockingOrderEnd) < new Date() && Number(status) === 2;
-    
-  //   if (isLate) {
-  //     return { label: "תפוס (באיחור)", class: "status-busy", icon: "🚫", canOrder: false };
-  //   }
-  //   const s = Number(status);
-  //   switch (s) {
-  //     case 0: return { label: "פנוי", class: "status-free", icon: "✅", canOrder: true };
-  //     case 1: return { label: "פנוי חלקית", class: "status-partial", icon: "⏳", canOrder: true };
-  //     case 2: return { label: "תפוס", class: "status-busy", icon: "🚫", canOrder: false };
-  //     case 3: return { label: "בטיפול", class: "status-maintenance", icon: "🔧", canOrder: false };
-  //     default: return { label: "לא זמין", class: "status-maintenance", icon: "❓", canOrder: false };
-  //   }
-  // };
+
 const getStatusInfo = (status, car) => {
     const s = Number(status);
     

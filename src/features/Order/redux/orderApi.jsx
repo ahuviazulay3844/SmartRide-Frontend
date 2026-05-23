@@ -80,16 +80,16 @@ getOrdersByDateRange: builder.query({
 
         // --- Mutations (פעולות ועדכונים) ---
 
-        createOrder: builder.mutation({
-            query: (newOrder) => ({
-                url: 'Orders',
-                method: 'POST',
-                body: newOrder,
-            }),
-            invalidatesTags: [{ type: 'Cars', id: 'LIST' }]
+        // createOrder: builder.mutation({
+        //     query: (newOrder) => ({
+        //         url: 'Orders',
+        //         method: 'POST',
+        //         body: newOrder,
+        //     }),
+        //     invalidatesTags: [{ type: 'Cars', id: 'LIST' }]
 
-            // invalidatesTags: ['Orders', 'Cars'], // מרענן גם את רשימת הרכבים כדי לעדכן זמינות
-        }),
+        //     // invalidatesTags: ['Orders', 'Cars'], // מרענן גם את רשימת הרכבים כדי לעדכן זמינות
+        // }),
 
         updateOrder: builder.mutation({
             query: ({ id, ...patch }) => ({
@@ -125,14 +125,14 @@ submitStartReport: builder.mutation({
     invalidatesTags: ['Orders', 'Cars'], 
 }),
 // תוסיפי את זה בתוך endpoints: (builder) => ({ ... })
-confirmReplacement: builder.mutation({
-    query: ({ id, accept }) => ({
-        url: `Orders/${id}/confirm-replacement?accept=${accept}`,
-        method: 'POST',
-    }),
-   invalidatesTags: [{ type: 'Cars', id: 'LIST' }]
- // מרענן את הרשימה מיד אחרי הלחיצה
-}),
+// confirmReplacement: builder.mutation({
+//     query: ({ id, accept }) => ({
+//         url: `Orders/${id}/confirm-replacement?acceZpt=${accept}`,
+//         method: 'POST',
+//     }),
+//    invalidatesTags: [{ type: 'Cars', id: 'LIST' }]
+//  // מרענן את הרשימה מיד אחרי הלחיצה
+// }),
 
         lockCar: builder.mutation({
             query: (id) => ({
@@ -184,6 +184,24 @@ updateProgress: builder.mutation({
         query: ({ userId, start, end }) => 
             `Orders/check-user-overlap?userId=${userId}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
     }),
+    createOrder: builder.mutation({
+    query: (newOrder) => ({
+        url: 'Orders',
+        method: 'POST',
+        body: newOrder,
+    }),
+    // הוסף את 'Orders' לרשימת ה-invalidatesTags
+    invalidatesTags: ['Orders', { type: 'Cars', id: 'LIST' }]
+}),
+
+confirmReplacement: builder.mutation({
+    query: ({ id, accept }) => ({
+        url: `Orders/${id}/confirm-replacement?accept=${accept}`,
+        method: 'POST',
+    }),
+    // חייב לרענן את Orders כדי שההזמנה הישנה תיעלם והחדשה תופיע
+    invalidatesTags: ['Orders', { type: 'Cars', id: 'LIST' }]
+}),
     // הוסיפי לתוך ה-endpoints ב-orderApi.jsx
 reportRefuel: builder.mutation({
     query: (id) => ({

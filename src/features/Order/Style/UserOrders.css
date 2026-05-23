@@ -87,7 +87,7 @@
         animation: shake-and-pulse 1.2s infinite ease-in-out;
     }
 
-    .late-text strong { color: #b91c1c; font-size: 1.1rem; font-weight: 900; }
+    .late-text  { color: #b91c1c; font-size: 1.1rem; font-weight: 900; }
 
     /* --- אלמנטים נוספים --- */
     .car-actual-image { width: 110px; height: 65px; object-fit: contain; }

@@ -51,8 +51,26 @@ const MainPage = () => {
         }
     }, [userFromServer, currentUser, dispatch, navigate]);
 
-    const { data: cars = [], isLoading: carsLoading, isError } = useGetAllCarsQuery();
+    const { data: cars = [], isLoading: carsLoading, isError, refetch } = useGetAllCarsQuery();
 
+    // עדכון אוטומטי של הרכבים כל 5 שניות
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refetch();
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [refetch]);
+const handleLogout = () => {
+    // 1. ניקוי הסטייט ב-Redux (משנה את currentUser ל-null)
+    dispatch(setUser(null)); 
+    
+    // 2. מחיקת הטוקן מהאחסון המקומי
+    localStorage.removeItem('token');
+    
+    // 3. החזרה לדף הבית
+    setActiveView('home');
+    navigate('/'); 
+};
     const handleFinalRegistration = async (sigData) => {
         try {
             const finalData = {
@@ -113,6 +131,7 @@ const MainPage = () => {
             // onRegisterClick={!loggedIn ? () => setActiveView('register') : null}
             onRegisterClick={() => setActiveView('register')}
             onLoginClick={() => { setRedirectTo('home'); setActiveView('auth'); }}
+            onLogout={handleLogout}
             onPricingClick={() => setActiveView('pricing')}
             onOrdersClick={() => {
                 if (loggedIn) setActiveView('orders');

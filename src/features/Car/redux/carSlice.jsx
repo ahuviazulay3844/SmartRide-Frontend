@@ -13,6 +13,14 @@ const carSlice = createSlice({
     reducers: {
         // כאן אפשר להוסיף פעולות כמו ניקוי הרשימה ביציאה מהמערכת
         resetCarState: () => initialState,
+        // עדכון סטטוס של רכב בודד בזמן אמת
+        updateCarStatusInList: (state, action) => {
+            const { carId, status } = action.payload;
+            const car = state.carsList.find(c => c.id === carId);
+            if (car) {
+                car.status = status;
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -43,5 +51,5 @@ const carSlice = createSlice({
 });
 export const selectCarStatus = (state) => state.car.status;
 export const selectAllCars = (state) => state.car.carsList;
-export const { resetCarState } = carSlice.actions;
+export const { resetCarState, updateCarStatusInList } = carSlice.actions;
 export default carSlice.reducer;

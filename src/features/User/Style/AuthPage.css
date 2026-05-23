@@ -172,3 +172,42 @@
     background: #fee2e2;
     color: #991b1b;
 }
+/* לינק שכחתי סיסמה */
+.forgot-password-link {
+    background: none;
+    border: none;
+    color: #7c3aed;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    font-weight: 500;
+}
+
+.forgot-password-link:hover {
+    text-decoration: underline;
+}
+
+/* טקסט הסבר קטן */
+.auth-subtitle {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* כפתור חזור */
+.back-to-login {
+    background: none;
+    border: 1px solid #ddd;
+    color: #666;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.back-to-login:hover {
+    background-color: #f9f9f9;
+}

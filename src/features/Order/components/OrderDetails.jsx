@@ -83,60 +83,45 @@ const OrderDetails = () => {
                       <label>איסוף:</label>
                       <strong>{new Date(order.startTime).toLocaleString('he-IL')}</strong>
                     </div>
+                          <div className="time-entry">
+                      <div className="dot end"></div>
+                      <label>סיום :</label>
+                      <strong>{new Date(order.expectedEndTime).toLocaleString('he-IL')}</strong>
+                      
+                    </div>
                     <div className="time-entry">
                       <div className="dot end"></div>
                       <label>סיום בפועל:</label>
                       <strong>{new Date(order.endTime).toLocaleString('he-IL')}</strong>
+                      
                     </div>
                   </div>
                 </div>
 
                 <div className="info-card financial highlight-card">
                   <h3><CreditCard size={18} /> סיכום חיוב סופי</h3>                 
-            <div className="price-breakdown">
-  <h4 className="breakdown-subtitle">פירוט חיובי נסיעה</h4>
+           <div className="price-breakdown">
+  <h4 className="breakdown-subtitle">פירוט חיובי נסיעה מפורט</h4>
   
-  {/* 1. עלות השכרה בסיסית */}
-  <div className="price-row">
-    <span>עלות השכרה ({order.pricingType === 'Daily' ? 'מסלול יומי' : 'מסלול שעתי'}):</span>
-    <span className="price-value">₪{order.basePrice}</span>
-  </div>
-
-  {/* 2. תוספת נהג חדש - מוצג רק אם המשתמש נהג חדש */}
-  {(order.isNewDriver || currentUser?.isNewDriver) && (
-    <div className="price-row extra-charge">
-      <span><AlertCircle size={14} /> תוספת נהג חדש (ביטוח):</span>
-      <span className="price-value">+ ₪50</span>
-    </div>
-  )}
-
-  {/* 3. חיוב קילומטראז' */}
-  <div className="price-row">
-    <span>מרחק נסיעה ({order.distanceDrivenKm || 0} ק"מ):</span>
-    <span className="price-value">₪{Math.round((order.distanceDrivenKm || 0) * (carData?.pricePerKm || 1.5))}</span>
-  </div>
-
-  {/* 4. קנס איחור - מוצג רק אם קיים */}
-  {order.lateFee > 0 && (
-    <div className="price-row penalty-row">
-      <span><AlertTriangle size={14} /> דמי איחור בהחזרה:</span>
-      <span className="price-value">+ ₪{Math.round(order.lateFee)}</span>
-    </div>
-  )}
-
-  {/* 5. זיכוי על תדלוק - מוצג בירוק עם סימן מינוס */}
-  {order.didCustomerRefuel && (
-    <div className="price-row credit-row">
-      <span><Fuel size={14} /> בונוס מילוי דלק (זיכוי):</span>
-      <span className="success-text">- ₪30</span>
-    </div>
-  )}
-
-  {/* 6. הנחת קופון או פיצוי על רכב חלופי */}
-  {(order.discountAmount > 0 || order.isReassigned) && (
-    <div className="price-row credit-row">
-      <span><CheckCircle size={14} /> הטבת פיצוי / הנחה:</span>
-      <span className="success-text">- ₪{order.discountAmount || 30}</span>
+  {order.priceBreakdown && order.priceBreakdown.length > 0 ? (
+    order.priceBreakdown.map((line, index) => (
+      <div 
+        key={index} 
+        className={`price-row ${line.isDiscount ? 'credit-row' : ''} ${line.label.includes('קנס') || line.label.includes('חוב') ? 'penalty-row-text' : ''}`}
+      >
+        <span className="price-label">
+          {line.isDiscount ? <CheckCircle size={14} /> : line.label.includes('איחור') || line.label.includes('קנס') ? <AlertTriangle size={14} /> : <Info size={14} />}
+          {line.label}:
+        </span>
+        <span className={line.isDiscount ? 'success-text' : 'price-value'}>
+          {line.isDiscount ? '-' : ''} ₪{Math.round(line.amount)}
+        </span>
+      </div>
+    ))
+  ) : (
+    <div className="price-row">
+       <span>עלות נסיעה כוללת:</span>
+       <span className="price-value">₪{Math.round(order.totalPrice)}</span>
     </div>
   )}
 
@@ -144,14 +129,14 @@ const OrderDetails = () => {
   
   <div className="final-price-row">
     <div className="final-label-group">
-        <span className="total-label">סה"כ לתשלום</span>
-        <span className="tax-note">(כולל מע"מ)</span>
+        <span className="total-label">סה"כ לתשלום בפועל</span>
+        <span className="tax-note">(לאחר זיכויים וקיזוז יתרה)</span>
     </div>
     <span className="price-big">₪{Math.round(order.totalPrice)}</span>
   </div>
 
   <div className="payment-confirmation-box">
-    <CheckCircle size={16} /> התשלום נגבה בהצלחה מכרטיס האשראי
+    <CheckCircle size={16} /> התשלום בוצע בהצלחה מהאמצעי המעודכן בחשבונך
   </div>
                     {/* <div className="payment-status-success">
                       <CheckCircle size={18} /> התשלום בוצע באופן אוטומטי

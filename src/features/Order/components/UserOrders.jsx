@@ -136,7 +136,7 @@ const UserOrders = () => {
 
   // --- Helpers ---
   const calculateLateMinutes = useCallback((expectedEnd, actualEnd, status) => {
-    if (status === 0||status === 3) return 0;
+    if (status === 0) return 0;
     const end = status === 2 ? new Date(actualEnd) : currentTime;
     const expected = new Date(expectedEnd);
     const diff = Math.floor((end - expected) / 60000);
@@ -433,7 +433,7 @@ const UserOrders = () => {
                       <div className="detail-item"><label>בפועל</label><span>{isFinished ? formatTime(order.endTime) : '--:--'}</span></div>
                       <div className="detail-item"><label>ק"מ</label><span>{Math.round(order.distanceDrivenKm) || 0}</span></div>
                     </div>
-
+{/* 
                     {lateMinutes > 0 && (
                       <div className={`late-warning-box ${isFinished ? 'past-late' : 'active-late'}`}>
                         <AlertTriangle className="blink-icon" size={18} />
@@ -442,8 +442,34 @@ const UserOrders = () => {
                           <strong className="text-danger">{formatLateTime(lateMinutes)} (₪{lateMinutes})</strong>
                         </div>
                       </div>
-                    )}
+                    )} */}
+{/* חישוב סך הכל דקות: מה שננעל בשרת (lateFee) + האיחור שקורה עכשיו */}
+{/* חישוב סך כל הדקות: מה שננעל ב-SQL + האיחור שקורה עכשיו */}
+{Math.round((order.lateFee || 0) + lateMinutes) > 0 && (
+  <div className={`late-warning-box ${isFinished ? 'past-late' : 'active-late'}`}>
+    {/* האייקון יהבהב רק אם המשתמש כרגע באיחור פיזי */}
+    <AlertTriangle className={lateMinutes > 0 ? "blink-icon" : ""} size={18} />
+    <div className="late-text">
+      {/* כותרת משתנה */}
+      <span>{isActive && lateMinutes > 0 ? 'איחור פעיל:' : 'עיכוב צבור:'}</span>
+      
+      {/* מציג דקות (ובסוגריים את המחיר) */}
+      <strong className="text-danger">
+        {formatLateTime(Math.round((order.lateFee || 0) + lateMinutes))} 
+        <span style={{ fontWeight: 'normal', fontSize: '13px', marginRight: '5px' }}>
+          (₪{Math.round((order.lateFee || 0) + lateMinutes)})
+        </span>
+      </strong>
 
+      {/* הסבר קטן למשתמש שהאריך */}
+      {isActive && lateMinutes === 0 && (
+        <small style={{display: 'block', fontSize: '10px', opacity: 0.7}}>
+          (הזמן הוארך, האיחור הקודם נשמר במערכת)
+        </small>
+      )}
+    </div>
+  </div>
+)}
                     {isActive && (
                       <div className="car-control-section">
                         <div className="fuel-gauge-container" style={{marginBottom: '15px', padding: '10px', background: 'rgba(0,0,0,0.03)', borderRadius: '12px'}}>

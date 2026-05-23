@@ -1,0 +1,51 @@
+/* FleetManagement.css */
+.admin-table-purple {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(30, 10, 50, 0.4);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.admin-table th {
+    background: rgba(142, 68, 173, 0.2);
+    color: #a569bd;
+    padding: 20px;
+    text-align: right;
+}
+
+.admin-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.btn-lock {
+    border-radius: 10px;
+    padding: 8px 15px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.btn-lock.locked {
+    background: rgba(231, 76, 60, 0.2);
+    color: #ff7675;
+    border-color: #e74c3c;
+}
+
+.btn-lock.unlocked {
+    background: rgba(46, 204, 113, 0.2);
+    color: #55efc4;
+    border-color: #2ecc71;
+}
+
+.btn-repair {
+    background: linear-gradient(90deg, #8e44ad, #a569bd);
+    color: white;
+}
+
+.btn-return {
+    background: #2d0d4f;
+    border: 1px solid var(--accent);
+    color: white;
+}

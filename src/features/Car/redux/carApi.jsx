@@ -31,17 +31,30 @@ export const carApi = createApi({
             query: (id) => `Cars/${id}`,
             providesTags: (result, error, id) => [{ type: 'Cars', id }],
         }),
+// getClosestCars: builder.query({
+//     query: ({ lat, lng, start, end }) => {
+
+//         let url = `Cars/closest?lat=${lat}&lng=${lng}`;
+
+//         if (start) url += `&start=${encodeURIComponent(start)}`;
+//         if (end) url += `&end=${encodeURIComponent(end)}`;
+
+//         return url;
+//     },
+//     providesTags: ['Cars'],
+// }),
 getClosestCars: builder.query({
     query: ({ lat, lng, start, end }) => {
-
         let url = `Cars/closest?lat=${lat}&lng=${lng}`;
-
         if (start) url += `&start=${encodeURIComponent(start)}`;
         if (end) url += `&end=${encodeURIComponent(end)}`;
-
         return url;
     },
-    providesTags: ['Cars'],
+    // נותן תיוג ספציפי לרשימה כדי שלא כל שינוי קטן יקפיץ את כל האפליקציה
+    providesTags: (result) =>
+        result
+            ? [...result.map(({ id }) => ({ type: 'Cars', id })), { type: 'Cars', id: 'CLOSEST_LIST' }]
+            : [{ type: 'Cars', id: 'CLOSEST_LIST' }],
 }),
 
 
@@ -80,6 +93,11 @@ getClosestCars: builder.query({
 
         getCarExtendedStatus: builder.query({
             query: (id) => `Cars/${id}/extended-status`,
+            providesTags: (result, error, id) => [{ type: 'Cars', id }],
+        }),
+
+        getCarStatus: builder.query({
+            query: (id) => `Cars/${id}/status`,
             providesTags: (result, error, id) => [{ type: 'Cars', id }],
         }),
 
@@ -194,7 +212,7 @@ extendOrder: builder.mutation({
         method: 'POST',
     }),
     // זה יגרום לכל המערכת להתרענן ולראות את זמן הסיום החדש
-    invalidatesTags: ['Cars'], 
+    invalidatesTags: ['Cars', 'Orders'], 
 }),
     }),
 });
@@ -210,6 +228,7 @@ export const {
     useGetCarsByStatusQuery,           // סינון לפי סטטוס
     useGetAvailableCarsByRegionQuery,   // פנויים באזור כרגע
     useGetCarExtendedStatusQuery,      // סטטוס זמינות מפורט
+    useGetCarStatusQuery,              // סטטוס רכב בודד
     useAddCarMutation,                 // הוספת רכב חדש
     useUpdateCarMutation,              // עדכון פרטי רכב
     useDeleteCarMutation,              // מחיקת רכב מהמערכת

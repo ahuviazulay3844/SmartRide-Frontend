@@ -1,0 +1,37 @@
+/* OrderLogs.css */
+.order-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.order-filters input, .order-filters select {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: white;
+    outline: none;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.status-badge.available { /* שולם / בזמן */
+    background: #10b981;
+    color: #fff;
+}
+
+.status-badge.repair { /* ממתין / איחור */
+    background: #ef4444;
+    color: #fff;
+}
+
+.btn-small {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+}

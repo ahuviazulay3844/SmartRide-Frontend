@@ -1,0 +1,45 @@
+/* UserManagement.css */
+.status-active {
+    color: #52be80;
+    font-weight: bold;
+}
+
+.status-blocked {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.btn-action {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-action:hover {
+    background: var(--secondary);
+    border-color: white;
+}
+
+.btn-delete {
+    background: transparent;
+    font-size: 1.2rem;
+    color: #ff7675;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.btn-delete:hover {
+    color: #ff4d4d;
+    transform: scale(1.1);
+}
+
+.page-hero-bar {
+    border-bottom: 2px solid var(--glass);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}

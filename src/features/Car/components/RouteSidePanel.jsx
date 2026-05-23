@@ -82,7 +82,6 @@ const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
       if (finalEnd.getTime() <= startDateTime.getTime()) {
         finalEnd = new Date(finalEnd.getTime() + ONE_DAY_MS);
       }
-
       // --- פתרון לסינכרון דקות: מוודאים שדקות הסיום תואמות לדקות ההתחלה ---
       finalEnd.setMinutes(startDateTime.getMinutes());
 
@@ -171,7 +170,7 @@ const handleConfirm = async () => {
     // בדיקה שהזמנה לא בעבר
     const earliestAllowed = new Date(actualNow.getTime() - 15 * 60000); 
     if (startDateTime < earliestAllowed) {
-        setErrorMessage("❌ הזמן שנבחר עבר. אנא עדכני לשעה קרובה יותר.");
+        setErrorMessage("❌ הזמן שנבחר עבר. אנא עדכן לשעה קרובה יותר.");
         return;
     }
 
@@ -272,7 +271,7 @@ const handleConfirm = async () => {
             <input
               className="white-input"
               type="time"
-              step="300"
+              step="3600"
               value={formatTime(endDateTime)}
               onChange={(e) =>
                 handleDateTimeChange(false, formatDate(endDateTime), e.target.value)

@@ -25,7 +25,7 @@ export default function CoverageSidePanel({ selectedCar, orderDetails, onClose, 
     const end = new Date(orderDetails.end);
 
     const isInsideShabbat = (date) => {
-      const day = date.getDay(); // 5 = שישי, 6 = שבת
+      const day = date.getDay(); 
       const hours = date.getHours();
 
       if (day === 5 && hours >= 16) return true;
@@ -37,7 +37,7 @@ export default function CoverageSidePanel({ selectedCar, orderDetails, onClose, 
     return isInsideShabbat(start) || isInsideShabbat(end);
   }, [orderDetails]);
 
-  // הגדרת הפונקציה כאן (לפני ה-return) פותרת את השגיאה מהצילום מסך
+  //save waiver choice to localStorage and pass data back to parent
   const handleFinalConfirm = () => {
     if (isBlocked) return;
     localStorage.setItem("coverage_waiver", JSON.stringify(waiver));

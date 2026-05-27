@@ -26,7 +26,7 @@ const UploadDocuments = ({ onBack, onFinish, uploadData, setUploadData }) => {
       reader.readAsDataURL(file);
     }
   };
-  // בדיקה האם יש תמונות כפולות
+  // check if there are duplicate images among the uploaded ones
   const hasDuplicates = () => {
     const images = [uploadData[0], uploadData[1], uploadData[2]].filter(img => img !== null);
     return new Set(images).size !== images.length;
@@ -34,7 +34,7 @@ const UploadDocuments = ({ onBack, onFinish, uploadData, setUploadData }) => {
   const isAllUploaded = uploadData[0] && uploadData[1] && uploadData[2];
   return (
     <div className="upload-page-container">
-      {/* עיצוב צדדי */}
+     
       <div className="square-decoration">
         <p className="decoration-text">העלאת <br /> מסמכים</p>
         <div className="circle-icon-decoration">
@@ -42,7 +42,7 @@ const UploadDocuments = ({ onBack, onFinish, uploadData, setUploadData }) => {
         </div>
       </div>
       <div className="upload-main-content">
-        {/* עיגולי סטפר למעלה */}
+       
         <div className="stepper-dots-container">
           {[0, 1, 2].map((step) => (
             <div 
@@ -73,14 +73,14 @@ const UploadDocuments = ({ onBack, onFinish, uploadData, setUploadData }) => {
           </label>
         </div>
 
-        {/* הודעת שגיאה אם יש כפילות */}
+       
         {isAllUploaded && hasDuplicates() && (
           <p className="error-message-text">נראה שהעלית תמונות זהות. נא לוודא שכל המסמכים שונים.</p>
         )}
 
         <button className="bottom-back-btn" onClick={onBack}>➜</button>
 
-        {/* כפתור סיום - יופיע רק אם הכל הועלה ואין כפילויות */}
+       
         {isAllUploaded && !hasDuplicates() && (
           <button className="finish-btn" onClick={onFinish}>
             סיום והמשך

@@ -6,11 +6,7 @@ import '../Style/PersonalArea.css';
 const PersonalArea = () => {
     const { data: currentUser, isLoading, isError } = useGetCurrentUserQuery();
     const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
-
-    // State לניהול הודעת ההצלחה (Toast)
     const [showToast, setShowToast] = useState(false);
-
-    // State לניהול השדות בטופס
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -19,7 +15,7 @@ const PersonalArea = () => {
         address: ''
     });
 
-    // סנכרון הנתונים מהשרת
+
     useEffect(() => {
         if (currentUser) {
             setFormData({
@@ -56,7 +52,6 @@ const PersonalArea = () => {
 
     return (
         <div className="pa-container">
-            {/* הודעת הצלחה צפה */}
             {showToast && (
                 <div className="toast-success">
                     <FaStar /> הפרטים עודכנו בהצלחה!

@@ -4,7 +4,6 @@ import carFeatureImg from '../../../assets/dacia.webp';
 import CarGallery from '../../Car/components/CarGallery.jsx';
 import '../Style/HomeContent.css';
 
-// שינוי 1: הוספת onViewPrices לרשימת ה-Props שהקומפוננטה מקבלת
 const HomeContent = ({ isLoading, isError, cars, onViewPrices }) => {
   
   useEffect(() => {
@@ -93,12 +92,10 @@ const HomeContent = ({ isLoading, isError, cars, onViewPrices }) => {
         ) : isError ? (
           <div className="error-state">לא ניתן לטעון רכבים כרגע</div>
         ) : (
-          /* שינוי 2: העברת ה-onViewPrices לקומפוננטת ה-CarGallery */
           <CarGallery cars={cars} onViewPrices={onViewPrices} />
         )}
       </section>
     </>
   );
 };
-
 export default HomeContent;

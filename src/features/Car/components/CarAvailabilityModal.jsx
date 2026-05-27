@@ -16,57 +16,51 @@ const formatTime = (dateString) => {
   if (isToday) {
     return `שעה ${timeStr}`;
   } else {
-    // הוספת year: "numeric" כדי להציג את השנה
+    //to format the date as 15.05.2026 we can use toLocaleDateString with the right options and then replace the slashes with dots
     const dateStr = date.toLocaleDateString("he-IL", { 
       day: "2-digit", 
       month: "2-digit", 
       year: "numeric" 
-    }).replace(/\//g, '.'); // הופך את התאריך לפורמט 15.05.2026
+    }).replace(/\//g, '.'); //   15.05.2026
     
     return `שעה ${timeStr} בתאריך ${dateStr}`;
   }
 };
   const status = Number(car?.status);
   
-  // הנתונים היבשים מהשרת
   const blockStart = car?.blockingOrderStart ? new Date(car.blockingOrderStart) : null;
   const blockEnd = car?.blockingOrderEnd ? new Date(car.blockingOrderEnd) : null;
   
-  // הזמן שהלקוח ביקש והזמן של עכשיו
   const reqStart = new Date(selectedTime.start);
   const reqEnd = new Date(selectedTime.end);
   const now = new Date();
 
   const getAvailabilityMessage = () => {
-    // 1. מצב בטיפול
+    // Maintenance
     if (status === 3) return "הרכב נמצא כרגע בתחזוקה או דורש תדלוק ולא ניתן להזמנה.";
 
-    // 2. מצב תפוס לגמרי (סטטוס 2)
+    // Occupied
 if (status === 2) {
   return `הרכב תפוס כרגע. הוא צפוי להתפנות ב${formatTime(blockEnd)}.`; 
 }
 
-    // 3. מצב פנוי חלקית (סטטוס 1) - כאן הלוגיקה המורכבת
+    // BLocked but might be bookable for part of the time
     if (status === 1 && blockStart && blockEnd) {
       
-      // חישוב חלון פנוי בתחילה: מהרגע שהלקוח רוצה (או מעכשיו) ועד שהרכב נתפס
+      // the effective start is the later of now or the requested start, because if the blocking period started in the past but the user is trying to book for now, we should consider the effective start as now for calculating the gap
       const effectiveStart = now > reqStart ? now : reqStart;
       const startGapMinutes = (blockStart - effectiveStart) / 60000;
       
-      // חישוב חלון פנוי בסוף: מהרגע שהרכב משתחרר ועד סוף ההזמנה המבוקשת
       const endGapMinutes = (reqEnd - blockEnd) / 60000;
 
-      // מקרה א: יש חלון של שעה לפני וגם חלון אחרי
       if (startGapMinutes >= 60 && endGapMinutes > 0) {
         return `שים לב: הרכב פנוי להזמנה עד שעה ${formatTime(blockStart)} ושוב החל משעה ${formatTime(blockEnd)}.`;
       }
       
-      // מקרה ב: יש חלון של שעה רק לפני (והחלון שאחרי כבר עבר או לא קיים)
       if (startGapMinutes >= 60) {
         return `שים לב: הרכב פנוי להזמנה רק עד שעה ${formatTime(blockStart)}.`;
       }
 
-      // מקרה ג: החלון שלפני קטן משעה או כבר עבר - נציג רק את החלון שאחרי
       if (endGapMinutes > 0) {
         return `הרכב תפוס בחלק מהזמן שבחרת. הוא יהיה פנוי עבורך החל משעה ${formatTime(blockEnd)}.`;
       }
@@ -122,10 +116,17 @@ if (status === 2) {
           <button className="btn-edit-time" onClick={() => onEditTime(car)}>שנה זמנים</button>
           <button 
             className="btn-confirm" 
-            disabled={status === 2 || status === 3}
+            disabled={status === 2 || status === 3|| status === 1}
             onClick={() => onConfirmSelection(car)}
           >
-            {status === 2 || status === 3 ? "הרכב תפוס" : "הזמן נסיעה עכשיו"}
+           {status === 2 || status === 3 || status === 4 ? (
+             "הרכב תפוס"
+           ) : status === 1 ? (
+             "פנוי חלקית"
+           ) : (
+             "הזמן נסיעה עכשיו"
+           )}
+
           </button>
         </div>
       </div>

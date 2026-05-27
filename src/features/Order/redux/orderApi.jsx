@@ -13,10 +13,10 @@ export const orderApi = createApi({
         },
     }),
     tagTypes: ['Orders'],
-    refetchOnMountOrArgChange: true,// שורה חדשה: מאלץ רענון נתונים בכל פעם שהפרמטרים משתנים או שהקומפוננטה עולה
+    refetchOnMountOrArgChange: true,
     endpoints: (builder) => ({
         
-        // --- Queries (שליפת נתונים) ---
+        // --- Queries  ---
         
         getAllOrders: builder.query({
             query: () => "Orders",

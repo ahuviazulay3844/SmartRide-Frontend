@@ -668,7 +668,7 @@
 
 .conflict-subtitle {
     font-size: 0.9rem;
-    color: #475569;
+    color: #6366f1;;
     margin: 0 0 12px 0;
 }
 
@@ -1038,4 +1038,104 @@
 @keyframes slideInDown {
     from { opacity: 0; transform: translate(-50%, -40px); }
     to { opacity: 1; transform: translate(-50%, 0); }
+}
+/* --- הצמדת הפילטרים למעלה (Sticky) --- */
+.filters-bar-white {
+    position: sticky;
+    top: 0; /* אם יש נאבר קבוע, שמי 65px */
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(8px); /* אפקט זכוכית יוקרתי */
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* --- מניעת גלילה אופקית מציקה --- */
+.orders-page-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+    padding: 20px;
+}
+
+/* --- התאמות רספונסיביות --- */
+
+@media (max-width: 1024px) {
+    .orders-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* סידור מחדש של בר הסינונים בנייד */
+    .filters-bar-white {
+        flex-direction: column;
+        gap: 12px;
+        padding: 15px;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .filter-group-main {
+        width: 100%;
+    }
+
+    /* הכרטיסים הופכים לרוחב מלא */
+    .orders-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* סידור נתוני הנסיעה (איסוף, החזרה וכו') מ-4 עמודות ל-2 שורות של 2 */
+    .details-grid-four {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .detail-item {
+        text-align: center;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 5px;
+    }
+
+    /* הקטנת תמונת הרכב בנייד שלא תתפוס מקום */
+    .car-actual-image {
+        width: 70px;
+        height: auto;
+    }
+
+    .car-model-name {
+        font-size: 1.1rem;
+    }
+
+    /* כפתורי השליטה הופכים לאחד מתחת לשני (נוח יותר ללחיצה) */
+    .car-remote-controls {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .btn-control {
+        height: 50px; /* הגדלה קלה ללחיצה נוחה עם האגודל */
+    }
+
+    /* התאמת הכותרת הראשית */
+    .orders-title {
+        font-size: 1.6rem;
+        text-align: center;
+    }
+}
+
+/* התאמה למסכים קטנים מאוד (כמו iPhone SE) */
+@media (max-width: 400px) {
+    .order-glass-card {
+        padding: 15px;
+    }
+    
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    .amount-display {
+        font-size: 1.2rem;
+    }
 }

@@ -8,23 +8,24 @@ const PriceList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSeats, setSelectedSeats] = useState("");
+  const [selectedZone, setSelectedZone] = useState("");
   const categoryNames = {
     0: "מיני", 1: "משפחתי", 2: "גדול", 3: "מסחרי", 4: "יוקרה"
   };
 const filteredCars = cars.filter((car) => {
     const model = (car.model || car.Model || "").toLowerCase();
     
-    // בדיקה של כל הווריאציות שהשרת שולח (אות גדולה/קטנה/שם שונה)
     const carCat = car.carCategory ?? car.CarCategory ?? car.category;
     const carSeats = car.seats ?? car.Seats;
+    const carZone = String(car.regionId ?? car.RegionId ?? "");
 
     const matchesSearch = model.includes(searchTerm.toLowerCase());
     
-    // תיקון קריטי: השוואה ישירה למספר (כמו ב-CarSelectionList שעובד לך)
     const matchesCategory = selectedCategory === "" || carCat === parseInt(selectedCategory);
     const matchesSeats = selectedSeats === "" || carSeats === parseInt(selectedSeats);
+    const matchesZone = selectedZone === "" || carZone === selectedZone;
 
-    return matchesSearch && matchesCategory && matchesSeats;
+    return matchesSearch && matchesCategory && matchesSeats && matchesZone;
   });
   if (isLoading) return <div className="loading-state">טוען קטלוג רכבים...</div>;
 
@@ -60,7 +61,18 @@ const filteredCars = cars.filter((car) => {
               <option value="4">יוקרה</option>
             </select>
           </div>
-
+          <div className="select-wrapper">
+          <select 
+            value={selectedZone} 
+            onChange={(e) => setSelectedZone(e.target.value)}
+          >
+            <option value="">כל האזורים</option>
+            <option value="1">רובע A</option>
+            <option value="2">רובע B</option>
+            <option value="3">רובע C</option>
+            <option value="4">רובע D</option>
+          </select>
+        </div>
           <div className="select-wrapper">
             <select 
               value={selectedSeats} 
@@ -76,7 +88,6 @@ const filteredCars = cars.filter((car) => {
       </div>
       <div className="catalog-grid">
         {filteredCars.map((car) => {
-          // חילוץ בטוח של הנתונים כדי למנוע את השגיאה שראינו בתמונה
           const km = car.kilometers ?? car.Kilometers ?? 0;
           const pPerHour = car.pricePerHour ?? car.PricePerHour ?? 0;
           const pPerDay = car.pricePerDay ?? car.PricePerDay ?? 0;

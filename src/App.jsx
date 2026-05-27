@@ -7,11 +7,9 @@ import CarInspectionModal from './features/Order/components/CarInspectionModal.j
 
 import './App.css';
 
-// App.jsx
 function App() {
   return (
     <Routes>
-      {/* MainPage כבר מכיל בתוכו את ה-MainLayout */}
       <Route path="/" element={<MainPage />} />          
       <Route path="/order-details/:id" element={<OrderDetails />} />
       <Route path="/admin" element={<AdminDashboard />} />

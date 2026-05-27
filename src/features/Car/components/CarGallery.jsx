@@ -1,13 +1,11 @@
 import React from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
-// הסרנו את ה-useNavigate כי אנחנו נשארים בתוך ה-MainPage
 import 'swiper/css';
 import 'swiper/css/navigation';
 import '../Style/CarGallery.css';
 
 const CarGallery = ({ cars, onViewPrices }) => {
-  // בדיקה למניעת קריסה אם הנתונים עדיין לא הגיעו
   if (!cars || cars.length === 0) return null; 
 
   return (
@@ -50,8 +48,6 @@ const CarGallery = ({ cars, onViewPrices }) => {
           </SwiperSlide>
         ))}
       </Swiper>    
-
-      {/* שימוש בפרופ onViewPrices כדי להחליף את ה-View ב-MainPage */}
       <button 
         className="view-all-btn" 
         onClick={onViewPrices} 

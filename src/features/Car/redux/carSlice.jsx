@@ -11,7 +11,6 @@ const carSlice = createSlice({
     name: 'car',
     initialState,
     reducers: {
-        // כאן אפשר להוסיף פעולות כמו ניקוי הרשימה ביציאה מהמערכת
         resetCarState: () => initialState,
         // עדכון סטטוס של רכב בודד בזמן אמת
         updateCarStatusInList: (state, action) => {
@@ -31,7 +30,7 @@ const carSlice = createSlice({
                     state.status = 'loading';
                 }
             )
-            // 2. מצב שבו הבקשה הצליחה (Succeeded)
+            // (Succeeded)
             .addMatcher(
                 carApi.endpoints.getAllCars.matchFulfilled, 
                 (state, { payload }) => {
@@ -39,7 +38,7 @@ const carSlice = createSlice({
                     state.carsList = payload;
                 }
             )
-            // 3. מצב שבו הבקשה נכשלה (Failed)
+            //(Failed)
             .addMatcher(
                 carApi.endpoints.getAllCars.matchRejected, 
                 (state, action) => {

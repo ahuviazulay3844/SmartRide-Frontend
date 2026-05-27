@@ -15,7 +15,8 @@ const MainLayout = ({
   onLogout,
   onProfileClick,
   onOrdersClick,
-  onPricingClick 
+  onPricingClick ,
+  onContactClick
 }) => {
 
   return (
@@ -37,21 +38,12 @@ const MainLayout = ({
             <div className="nav-buttons">
               <button className="btn-white-outline" onClick={onNewOrderClick}>הזמנה חדשה</button>
               
-              {/* {!currentUser && (
-                <>
-                  {onRegisterClick && (
-                    <button className="btn-white-outline" onClick={onRegisterClick}>הרשמה</button>
-                  )}
-                  <button className="btn-white-outline" onClick={onLoginClick}>התחברות</button>
-                </>
-              )} */}
             {!currentUser ? (
                 <>
                   <button className="btn-white-outline" onClick={onRegisterClick}>הרשמה</button>
                   <button className="btn-white-outline" onClick={onLoginClick}>התחברות</button>
                 </>
               ) : (
-                // כפתור התנתקות שיופיע רק אם המשתמש מחובר
                 <button className="btn-white-outline" onClick={onLogout}>התנתקות</button>
               )}
             </div>
@@ -80,9 +72,14 @@ const MainLayout = ({
         >
           ₪ <span>מחירון</span>
         </div>
-
-        <div className="sidebar-item">ℹ️ <span>מידע חשוב</span></div>
-        <div className="sidebar-item">📞 <span>צור קשר</span></div>
+        <div 
+          className={`sidebar-item ${activeView === 'contact' ? 'active' : ''}`} 
+          onClick={onContactClick}
+          style={{ cursor: 'pointer' }}
+        >
+          📞 <span>צור קשר</span>
+        </div>
+       
       </aside>
 
       <div className="main-scroll-area">

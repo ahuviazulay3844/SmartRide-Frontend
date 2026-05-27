@@ -21,6 +21,37 @@
     margin-bottom: 30px;
     border-right: 5px solid #5d299a;
     padding-right: 15px;
+}/* מיכל מרכזי לטעינה */
+.car-loading-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh; /* גובה במרכז האזור */
+    width: 100%;
+    gap: 20px;
+    color: #6F3293; /* צבע סגול של המותג */
+    font-weight: 600;
+}
+
+/* העיגול המסתובב - Spinner */
+.car-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #f3e8ff; /* צבע סגול בהיר מאוד ברקע */
+    border-top: 5px solid #6F3293; /* צבע סגול כהה למעלה שיוצר את התנועה */
+    border-radius: 50%;
+    animation: car-spin 1s linear infinite;
+}
+
+/* הגדרת האנימציה של הסיבוב */
+@keyframes car-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .cars-header h2 {

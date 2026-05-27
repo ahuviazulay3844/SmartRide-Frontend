@@ -4,13 +4,14 @@ import {
     useSendVerificationCodeMutation, 
     useVerifyRegistrationCodeMutation 
 } from '../redux/userApi';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
     const [step, setStep] = useState(1);
     const [error, setError] = useState('');
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const inputRefs = useRef([]);
-
+    const [showPassword, setShowPassword] = useState(false);
     const [sendCode, { isLoading: isSending }] = useSendVerificationCodeMutation();
     const [verifyCode, { isLoading: isVerifying }] = useVerifyRegistrationCodeMutation();
 
@@ -19,20 +20,32 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
             inputRefs.current[0].focus();
         }
     }, [step]);
-
+    // Updating everything
     const updateField = (field, value) => {
         setError('');
         setUserData(prev => {
             const updated = { ...prev, [field]: value };
-            // לוגיקת איפוס מדינה במעבר בין סוגי אזרחות
             if (field === 'isForeignCitizen') {
                 updated.countryOfOrigin = value ? '' : 'Israel';
             }
             return updated;
         });
     };
+const formatExpiryDate = (value) => {
+    // nummber only
+    let cleaned = value.replace(/\D/g, "");
+    
+    //(MM/YY) max length 4
+    if (cleaned.length > 4) cleaned = cleaned.slice(0, 4);
+    
+    //add slash after 2 digits
+    if (cleaned.length >= 3) {
+        return cleaned.slice(0, 2) + "/" + cleaned.slice(2);
+    }
+    return cleaned;
+};
 
-    // --- וולידציות ---
+    //validations for each step
     const validateStep1 = () => {
         if (!userData.firstName?.trim() || !userData.lastName?.trim()) {
             setError("חובה למלא שם פרטי ושם משפחה");
@@ -87,8 +100,8 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
             setError("מספר דרכון חייב להכיל בדיוק 9 ספרות");
             return false;
         }
-        if (!isForeign && (idValue.length < 7 || idValue.length > 9)) {
-            setError("מספר רישיון לא תקין");
+          if (!isForeign && idValue.length !== 9) {
+            setError("מספר רישיון חייב להכיל בדיוק 9 ספרות");
             return false;
         }
         if (!userData.licenseExpirationDate) {
@@ -103,20 +116,51 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
         }
         return true;
     };
-
     const validateStep7 = () => {
-        if (!userData.cardNumber || userData.cardNumber.length < 16) {
-            setError("חובה להזין מספר כרטיס תקין (16 ספרות)");
-            return false;
-        }
-        if (!userData.cardExpiry || !userData.cvv) {
-            setError("חובה למלא תוקף ו-CVV");
-            return false;
-        }
-        return true;
-    };
+    const { cardNumber, cardExpiry, cvv } = userData;
 
-    // --- שליחת קוד ואימות ---
+    if (!cardNumber || cardNumber.length < 16) {
+        setError("מספר כרטיס חייב להכיל 16 ספרות");
+        return false;
+    }
+    
+    // MM/YY
+    if (!/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+        setError("תוקף כרטיס לא תקין (MM/YY)");
+        return false;
+    }
+
+    // break down MM/YY
+    const [month, year] = cardExpiry.split('/').map(Number);
+    const now = new Date();
+    // get last 2 digits of current year
+    const currentYear = parseInt(now.getFullYear().toString().slice(-2));
+    const currentMonth = now.getMonth() + 1;
+
+    // validate month
+    if (month < 1 || month > 12) {
+        setError("חודש לא תקין (01-12)");
+        return false;
+    }
+
+    //check if card is expired
+    if (year < currentYear) {
+        setError("הכרטיס פג תוקף (שנה עברה)");
+        return false;
+    }
+    
+    if (year === currentYear && month < currentMonth) {
+        setError("הכרטיס פג תוקף (חודש עבר)");
+        return false;
+    }
+
+    if (!cvv || cvv.length < 3) {
+        setError("קוד CVV לא תקין");
+        return false;
+    }
+    return true;
+    };
+    // --- send  code ---
     const handleSendEmail = async () => {
         const email = userData?.email?.trim().toLowerCase();
         if (!email || !email.includes('@')) { setError("חובה להזין כתובת מייל תקינה"); return; }
@@ -126,6 +170,8 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
         } catch (err) {
             setError(err.data?.message || "שגיאה בשליחת המייל");
         }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(email)) { setError("כתובת אימייל לא תקינה"); return; }
     };
 
     const handleVerifyOtp = async () => {
@@ -158,7 +204,7 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
                         {step === 1 && (
                             <div className="step-fade-in">
                                 <div className="input-wrapper">
-                                    <input type="text" placeholder="שם פרטי" value={userData.firstName || ""} onChange={(e) => updateField('firstName', e.target.value)} />
+                                    <input type="text" placeholder="שם פרטי" value={userData.firstName || ""}onChange={(e) => updateField('firstName', e.target.value.replace(/[^a-zA-Zא-ת\s]/g, ""))}/>
                                 </div>
                                 <div className="input-wrapper">
                                     <input type="text" placeholder="שם משפחה" value={userData.lastName || ""} onChange={(e) => updateField('lastName', e.target.value)} />
@@ -193,7 +239,7 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
                             <div className="step-fade-in">
                                 <p className="info-label">מה המייל שלך?</p>
                                 <div className="input-wrapper">
-                                    <input type="email" placeholder="email@example.com" value={userData.email || ""} onChange={(e) => updateField('email', e.target.value)} />
+                                    <input type="email" placeholder="email@example.com" value={userData.email || ""} onChange={(e) => updateField('email', e.target.value)} autoComplete="email" />
                                 </div>
                                 <button className="gold-btn" onClick={handleSendEmail} disabled={isSending}>{isSending ? "שולח..." : "שלחו לי קוד אימות"}</button>
                             </div>
@@ -218,67 +264,127 @@ const PersonalQuestions = ({ onBack, onNext, userData, setUserData }) => {
                             </div>
                         )}
 
-                        {step === 5 && (
-                            <div className="step-fade-in">
-                                <div className="input-wrapper">
-                                    <input type="password" placeholder="סיסמה (6+ תווים)" value={userData.passwordHash || ""} onChange={(e) => updateField('passwordHash', e.target.value)} />
-                                </div>
-                                <div className="input-wrapper">
-                                    <input type="tel" placeholder="מספר טלפון" value={userData.phoneNumber || ""} onChange={(e) => updateField('phoneNumber', e.target.value)} />
-                                </div>
-                                <p className="header-sub-text">תאריך לידה:</p>
-                                <div className="input-wrapper">
-                                    <input type="date" value={userData.dateOfBirth || ""} onChange={(e) => updateField('dateOfBirth', e.target.value)} />
-                                </div>
-                                <button className="gold-btn" onClick={() => validateStep5() && setStep(6)}>לשלב הבא</button>
-                            </div>
-                        )}
+                   {step === 5 && (
+    <div className="step-fade-in">
+        <form onSubmit={(e) => { e.preventDefault(); validateStep5() && setStep(6); }}>  
+            <input 
+                type="email" 
+                name="email" 
+                value={userData.email} 
+                autoComplete="username" 
+                style={{ display: 'none' }} 
+                readOnly 
+            />
+            
+            <div className="input-wrapper" style={{ position: 'relative' }}>
+                <input 
+                    type={showPassword ? "text" : "password"} 
+                    name="password" 
+                    placeholder="סיסמה (6+ תווים)" 
+                    value={userData.passwordHash || ""} 
+                    autoComplete="new-password" 
+                    onChange={(e) => updateField('passwordHash', e.target.value)} 
+                    required
+                />
+                <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#6F3293' }}
+                >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+            </div>
+            
+            <div className="input-wrapper">
+                <input 
+                    type="tel" 
+                    name="phoneNumber"
+                    placeholder="מספר טלפון (10 ספרות)" 
+                    maxLength="10"
+                    value={userData.phoneNumber || ""} 
+                    onChange={(e) => updateField('phoneNumber', e.target.value.replace(/\D/g, ""))} 
+                    required
+                />
+            </div>
 
-                        {step === 6 && (
-                            <div className="step-fade-in">
-                                <div className="input-wrapper">
-                                    <input 
-                                        type="text" 
-                                        placeholder={userData.isForeignCitizen ? "מספר דרכון (9 ספרות)" : "מספר רישיון נהיגה"} 
-                                        value={userData.isForeignCitizen ? userData.passportNumber : userData.licenseNumber} 
-                                        onChange={(e) => updateField(userData.isForeignCitizen ? 'passportNumber' : 'licenseNumber', e.target.value)} 
-                                    />
-                                </div>
-                                <p className="header-sub-text">תאריך תפוגת רישיון:</p>
-                                <div className="input-wrapper">
-                                    <input type="date" value={userData.licenseExpirationDate || ""} onChange={(e) => updateField('licenseExpirationDate', e.target.value)} />
-                                </div>
-                                <button className="gold-btn" onClick={() => validateStep6() && setStep(7)}>מעבר לתשלום</button>
-                            </div>
-                        )}
+            <p className="header-sub-text">תאריך לידה:</p>
+            <div className="input-wrapper">
+                <input 
+                    type="date" 
+                    name="dateOfBirth"
+                    value={userData.dateOfBirth || ""} 
+                    onChange={(e) => updateField('dateOfBirth', e.target.value)} 
+                    required
+                />
+            </div>
 
-                        {step === 7 && (
-                            <div className="step-fade-in">
-                                <div className="input-wrapper">
-                                    <input type="text" maxLength="16" placeholder="מספר כרטיס אשראי" value={userData.cardNumber || ""} onChange={(e) => updateField('cardNumber', e.target.value.replace(/\D/g,''))} />
-                                </div>
-                                <div style={{ display: 'flex', gap: '15px' }}>
-                                    <div className="input-wrapper">
-                                        <input type="text" placeholder="MM/YY" value={userData.cardExpiry || ""} onChange={(e) => updateField('cardExpiry', e.target.value)} />
-                                    </div>
-                                    <div className="input-wrapper">
-                                        <input type="text" maxLength="3" placeholder="CVV" value={userData.cvv || ""} onChange={(e) => updateField('cvv', e.target.value.replace(/\D/g,''))} />
-                                    </div>
-                                </div>
-                                <button className="gold-btn" onClick={() => validateStep7() && onNext()}>המשך להעלאת מסמכים</button>
-                            </div>
-                        )}
+            <button type="submit" className="gold-btn">לשלב הבא</button>
+        </form>
+    </div>
+)}
 
-                        {error && <p className="error-text">{error}</p>}
-                    </div>
+{step === 6 && (
+    <div className="step-fade-in">
+        <div className="input-wrapper">
+            <input 
+                type="text" 
+                placeholder={userData.isForeignCitizen ? "מספר דרכון (9 ספרות)" : "מספר רישיון נהיגה"} 
+                value={userData.isForeignCitizen ? userData.passportNumber : userData.licenseNumber} 
+                onChange={(e) => updateField(userData.isForeignCitizen ? 'passportNumber' : 'licenseNumber', e.target.value)} 
+            />
+        </div>
+        <p className="header-sub-text">תאריך תפוגת רישיון:</p>
+        <div className="input-wrapper">
+            <input type="date" value={userData.licenseExpirationDate || ""} onChange={(e) => updateField('licenseExpirationDate', e.target.value)} />
+        </div>
+        <button className="gold-btn" onClick={() => validateStep6() && setStep(7)}>מעבר לתשלום</button>
+    </div>
+)}
 
-                    <button className="back-arrow-btn" onClick={() => step > 1 ? setStep(step === 5 ? 3 : step - 1) : onBack()}>
-                        <span className="arrow-icon">➜</span>
-                    </button>
+                     {step === 7 && (
+    <div className="step-fade-in">
+        <div className="input-wrapper">
+            <input 
+                type="text" 
+                maxLength="16" 
+                placeholder="מספר כרטיס אשראי" 
+                value={userData.cardNumber || ""} 
+                onChange={(e) => updateField('cardNumber', e.target.value.replace(/\D/g,''))} 
+            />
+        </div>
+        <div style={{ display: 'flex', gap: '15px' }}>
+            <div className="input-wrapper">
+                <input 
+                    type="text" 
+                    placeholder="MM/YY" 
+                    maxLength="5" // חשוב: MM/YY זה 5 תווים
+                    value={userData.cardExpiry || ""} 
+                    // שימוש בפורמט האוטומטי כאן:
+                    onChange={(e) => updateField('cardExpiry', formatExpiryDate(e.target.value))} 
+                />
+            </div>
+            <div className="input-wrapper">
+                <input 
+                    type="text" 
+                    maxLength="3" 
+                    placeholder="CVV" 
+                    value={userData.cvv || ""} 
+                    onChange={(e) => updateField('cvv', e.target.value.replace(/\D/g,''))} 
+                />
+            </div>
+        </div>
+        <button className="gold-btn" onClick={() => validateStep7() && onNext()}>המשך להעלאת מסמכים</button>
+    </div>
+)}
+         {error && <p className="error-text">{error}</p>}
+     </div>
+
+     <button className="back-arrow-btn" onClick={() => step > 1 ? setStep(step === 5 ? 3 : step - 1) : onBack()}>
+         <span className="arrow-icon">➜</span>
+     </button>
                 </div>
             </div>
         </div>
     );
 };
-
 export default PersonalQuestions;

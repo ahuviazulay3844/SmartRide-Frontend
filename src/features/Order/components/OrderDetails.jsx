@@ -68,7 +68,6 @@ const OrderDetails = () => {
                 </div>
               )}
               <div className="car-specs-mini">
-                <div className="spec-pill"><Fuel size={16}/> {carData?.fuelType || 'חשמלי'}</div>
                 <div className="spec-pill"><Info size={16}/> {carData?.year || '2024'}</div>
               </div>
             </div>
@@ -137,22 +136,19 @@ const OrderDetails = () => {
 
   <div className="payment-confirmation-box">
     <CheckCircle size={16} /> התשלום בוצע בהצלחה מהאמצעי המעודכן בחשבונך
+  </div>      
   </div>
-                    {/* <div className="payment-status-success">
-                      <CheckCircle size={18} /> התשלום בוצע באופן אוטומטי
-                    </div> */}
-                  </div>
-                </div>
+</div>
 
-                <div className="info-card summary-box">
-                    <h3><MapPin size={18} /> נתונים נוספים</h3>
-                    <p>נסיעה זו נסגרה לאחר וידוא נעילת דלתות ובדיקת מערכות. הקבלה נשלחה לכתובת המייל המעודכנת בחשבון.</p>
-                </div>
-              </div>
-            </div>
+          <div className="info-card summary-box">
+              <h3><MapPin size={18} /> נתונים נוספים</h3>
+              <p>נסיעה זו נסגרה לאחר וידוא נעילת דלתות ובדיקת מערכות. הקבלה נשלחה לכתובת המייל המעודכנת בחשבון.</p>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
     </MainLayout>
   );
 };

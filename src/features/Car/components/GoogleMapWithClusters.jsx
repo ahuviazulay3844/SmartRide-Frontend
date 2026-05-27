@@ -29,7 +29,7 @@ const CAR_ICONS = [
 const GoogleMapWithClusters = ({ carsList = [], onCarSelect, onRouteConfirm }) => {
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
-        googleMapsApiKey: "AIzaSyAt5iqzT61JEypZuLYOCJi9tGBIaQK443U", // מומלץ להעביר ל-env
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, 
         language: 'iw',
         region: 'IL'
     });
@@ -51,11 +51,10 @@ const GoogleMapWithClusters = ({ carsList = [], onCarSelect, onRouteConfirm }) =
     const mapRef = useRef(null);
 
     // API Calls
-const { data: closestCarsFromServer, isFetching,isLoading  } = useGetClosestCarsQuery(
+const { data: closestCarsFromServer,isLoading  } = useGetClosestCarsQuery(
     { 
         lat: userLocation?.lat, 
         lng: userLocation?.lng,
-        // המרה ל-String פשוט (ISO) כדי ש-Redux יפסיק להתרסק
         start: orderPayload?.start ? new Date(orderPayload.start).toISOString() : null,
         end: orderPayload?.end ? new Date(orderPayload.end).toISOString() : null
     },
@@ -78,28 +77,26 @@ const { data: closestCarsFromServer, isFetching,isLoading  } = useGetClosestCars
         }
     };
 
-    const processedCars = useMemo(() => {
-        const rawData = closestCarsFromServer?.data || closestCarsFromServer;
-        const sourceList = (Array.isArray(rawData) && rawData.length > 0) ? rawData : carsList;
-
+       const processedCars = useMemo(() => {
+       const rawData = closestCarsFromServer?.data || closestCarsFromServer;
+       const sourceList = (Array.isArray(rawData) && rawData.length > 0) ? rawData : carsList;
         return (sourceList || [])
-            .filter(car => car.Latitude || car.latitude)
-.map((car, index) => ({
-    ...car,
-    id: car.Id || car.id || index,
+        .filter(car => car.Latitude || car.latitude)
+        .map((car, index) => ({
+         ...car,
+         id: car.Id || car.id || index,
 
-    status: car.Status ?? car.status,
+         status: car.Status ?? car.status,
 
-    position: {
-        lat: parseFloat(car.Latitude || car.latitude),
-        lng: parseFloat(car.Longitude || car.longitude)
-    },
+         position: {
+             lat: parseFloat(car.Latitude || car.latitude),
+             lng: parseFloat(car.Longitude || car.longitude)
+         },
 
-    distance: car.Distance ?? car.distance ?? 999,
+        distance: car.Distance ?? car.distance ?? 999,
 
-    carIcon: CAR_ICONS[Math.abs(car.Id || index) % CAR_ICONS.length]
-}))
-            .sort((a, b) => a.distanceVal - b.distanceVal);
+        carIcon: CAR_ICONS[Math.abs(car.Id || index) % CAR_ICONS.length]
+})) .sort((a, b) => a.distanceVal - b.distanceVal);
     }, [carsList, closestCarsFromServer]);
 
     if (!isLoaded) return <div className="loading-map">טוען...</div>;
@@ -169,55 +166,31 @@ const { data: closestCarsFromServer, isFetching,isLoading  } = useGetClosestCars
                                 />
                             </div>
                         ) : showGridFull ? (
-                            /* Step 2: Car List */
-            //                 <div className="grid-full">
-            //                     {isFetching ? (
-            //                         <div className="loading-overlay">מחשב רכבים קרובים...</div>
-            //                     ) : (
-            //                         <CarSelectionList
-            //                             cars={processedCars}
-            //                             selectedTime={orderPayload}
-            //                             userLat={userLocation?.lat} 
-            // userLng={userLocation?.lng}  
-            //                             onEditTime={(car) => {
-            //                                 setSelectedCar(car);
-            //                                 setEditingTimeFromCarModal(true);
-            //                                 setShowSidePanel(true);
-            //                             }}
-            //                             onSelectCar={(car) => {
-            //                                 setSelectedCar(car);
-            //                                 setCompletedSteps(prev => [...new Set([...prev, 2])]);
-            //                                 setCurrentStep(3);
-            //                                 if (onCarSelect) onCarSelect(car);
-            //                             }}
-            //                         />
-            //                     )}
-            /* Step 2: Car List */
-/* Step 2: Car List */
-<div className="grid-full">
-    {/* שינוי קריטי: isLoading בודק רק את הפעם הראשונה. isFetching קורה בכל פול שקט */}
-    {isLoading && !closestCarsFromServer ? ( 
-        <div className="loading-overlay-full">מחשב רכבים קרובים...</div>
-    ) : (
-        <CarSelectionList
-            // אנחנו כבר לא צריכים להעביר את processedCars כי CarSelectionList מושך לבד
-            selectedTime={orderPayload}
-            userLat={userLocation?.lat} 
-            userLng={userLocation?.lng}  
-            onEditTime={(car) => {
-                setSelectedCar(car);
-                setEditingTimeFromCarModal(true);
-                setShowSidePanel(true);
-            }}
-            onSelectCar={(car) => {
-                setSelectedCar(car);
-                setCompletedSteps(prev => [...new Set([...prev, 2])]);
-                setCurrentStep(3);
-                if (onCarSelect) onCarSelect(car);
-            }}
-        />
-    )}
-</div>
+                    /* Step 2: Car List */
+                    <div className="grid-full">
+                        {/* שינוי קריטי: isLoading בודק רק את הפעם הראשונה. isFetching קורה בכל פול שקט */}
+                        {isLoading && !closestCarsFromServer ? ( 
+                            <div className="loading-overlay-full">מחשב רכבים קרובים...</div>
+                        ) : (
+                            <CarSelectionList
+                                
+                                selectedTime={orderPayload}
+                                userLat={userLocation?.lat} 
+                                userLng={userLocation?.lng}  
+                                onEditTime={(car) => {
+                                    setSelectedCar(car);
+                                    setEditingTimeFromCarModal(true);
+                                    setShowSidePanel(true);
+                                }}
+                                onSelectCar={(car) => {
+                                    setSelectedCar(car);
+                                    setCompletedSteps(prev => [...new Set([...prev, 2])]);
+                                    setCurrentStep(3);
+                                    if (onCarSelect) onCarSelect(car);
+                                }}
+                            />
+                        )}
+                    </div>
                         ) : (
                             /* Step 1: Map View */
                             <div className="map-view">

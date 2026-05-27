@@ -85,3 +85,43 @@ html, body {
   transition: all 0.3s ease;
 }
 .btn-white-outline:hover { background: white; color: #6F3293; }
+/* --- שינוי נקודת השבירה כדי שהסיידבר יישאר בצד גם בחצי מסך --- */
+
+/* משנים מ-768px ל-500px */
+@media (max-width: 500px) { 
+    .right-sidebar {
+        right: 0;
+        bottom: 0;
+        top: auto;
+        width: 100%;
+        height: 65px;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        padding-top: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .main-scroll-area {
+        margin-right: 0 !important; /* ביטול המרווח הימני רק בטלפון */
+        width: 100% !important;
+        padding-bottom: 70px;
+    }
+
+    .phone-info, .user-greeting {
+        display: none;
+    }
+}
+
+/* לוודא שהמרווח לסיידבר נשאר בכל מצב מעל 500 פיקסלים */
+@media (min-width: 501px) {
+    .main-scroll-area {
+        margin-right: 80px !important;
+        width: calc(100% - 80px) !important;
+        display: block;
+    }
+    
+    .right-sidebar {
+        display: flex !important; /* מוודא שהסיידבר מופיע בצד */
+    }
+}

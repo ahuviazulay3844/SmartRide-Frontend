@@ -8,27 +8,21 @@ const Signature = ({ onComplete, onBack }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSave = () => {
-    // 1. בדיקת אישור תקנון
     if (!isAgreed) {
       setErrorMessage("חובה לאשר את תנאי השימוש");
       return;
     }
 
-    // 2. בדיקה שהקנבס קיים ואינו ריק
     if (!sigCanvas.current || sigCanvas.current.isEmpty()) {
       setErrorMessage("נא לחתום בתיבה לפני האישור");
       return;
     }
-
-    // 3. ניקוי שגיאות ושליחת הנתונים
     setErrorMessage("");
     
     try {
-      // חיתוך החתימה והפיכתה ל-Base64
       const signatureData = sigCanvas.current.getTrimmedCanvas().toDataURL("image/png");
       onComplete(signatureData); 
     } catch (error) {
-      // למקרה שיש בעיה בספריה, נשלח דאטה דמה כדי שלא ייתקע הרישום
       console.error("Signature export failed, using fallback");
       onComplete("dummy-signature-data");
     }
@@ -37,7 +31,7 @@ const Signature = ({ onComplete, onBack }) => {
   return (
     <div className="legal-page-bg">
       <div className="legal-container">
-        {/* צד ימין - תוכן החוזה */}
+     
         <div className="contract-view">
           <h2 className="contract-title">חוזה שימוש ברכבי סיטי קאר</h2>
           <div className="contract-content">

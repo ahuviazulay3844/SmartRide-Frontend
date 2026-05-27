@@ -12,14 +12,14 @@ const whiteMinimalStyle = [
 const GoogleMapWithMarker = ({ carLocation, carTitle }) => {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyAt5iqzT61JEypZuLYOCJi9tGBIaQK443U",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, 
     language: 'iw',
     region: 'IL'
   });
 
   const position = useMemo(() => ({
-    lat: parseFloat(carLocation?.latitude || carLocation?.lat || carLocation?.Latitude || 0),
-    lng: parseFloat(carLocation?.longitude || carLocation?.lng || carLocation?.Longitude || 0)
+    lat: parseFloat(carLocation?.latitude || 0),
+    lng: parseFloat(carLocation?.longitude || 0)
   }), [carLocation]);
 
   if (!isLoaded) return <div className="loading-map">טוען מפה...</div>;
@@ -32,15 +32,18 @@ const GoogleMapWithMarker = ({ carLocation, carTitle }) => {
         zoom={16}
         options={{ disableDefaultUI: true, zoomControl: true, styles: whiteMinimalStyle }}
       >
-        <MarkerF
-          position={position}
-          title={carTitle}
-          icon={{
-            url: '/assets/car_icon_purple.png', 
-            scaledSize: new window.google.maps.Size(45, 45),
-            anchor: new window.google.maps.Point(22, 22)
-          }}
-        />
+ <MarkerF
+  position={position}
+  title={carTitle}
+  optimized={false} 
+  icon={{
+    url: '/assets/car_icon_purple.png',
+    // google.maps.SymbolPath.CIRCLE, 
+    scaledSize: new window.google.maps.Size(45, 45), 
+    anchor: new window.google.maps.Point(22.5, 22.5),
+    origin: new window.google.maps.Point(0, 0)
+  }}
+/>
       </GoogleMap>
     </div>
   );

@@ -39,8 +39,7 @@ const Register = ({ onStepClick, isForeign }) => {
             mask="url(#hole)"
           />
         </svg>
-
-        {/* שלב 1: פרטים אישיים */}
+         {/* Personal details */}
         <div className="step-item s1 clickable" onClick={() => onStepClick('questions')}>
           <div className="circle-wrap"><img src={personal_details} alt="פרטים אישיים" /></div>
           <div className="text-wrap">
@@ -64,7 +63,7 @@ const Register = ({ onStepClick, isForeign }) => {
           </div>
         </div>
         
-        {/* שלב 3: אזרח חו"ל - מוצג תמיד אבל לחיץ רק אם רלוונטי או מדלג */}
+        {/*Step 3: Overseas Citizen - Always displayed but clickable only if relevant or skips*/}
         <div className={`step-item s3 clickable ${!isForeign ? 'disabled-step' : ''}`} 
              onClick={() => isForeign ? onStepClick('foreign') : alert("שלב זה מיועד לאזרחי חו\"ל בלבד")}>
           <div className="circle-wrap"><img src={foreign_citizen} alt="אזרח חוץ" /></div>
@@ -77,7 +76,7 @@ const Register = ({ onStepClick, isForeign }) => {
           </div>
         </div>
 
-        {/* שלב 4: חתימה */}
+        { /*Step 4: Signature - Always displayed and clickable, but if foreign citizen step is relevant, it should be completed first*/}
         <div className="step-item s4 clickable" onClick={() => onStepClick('signature')}>
           <div className="circle-wrap"><img src={signature} alt="חתימה" /></div>
           <div className="text-wrap">

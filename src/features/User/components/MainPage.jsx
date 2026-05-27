@@ -16,6 +16,7 @@ import UploadDocuments from './UploadDocuments.jsx';
 import UploadForeignDocuments from './UploadForeignDocuments.jsx';
 import UserOrders from '../../Order/components/UserOrders.jsx'; 
 import PriceList from '../../Car/components/PriceList.jsx'; 
+import ContactUs from './ContactUs.jsx'; 
 
 const MainPage = () => {
     const [activeView, setActiveView] = useState('home');
@@ -33,6 +34,7 @@ const MainPage = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
     const token = localStorage.getItem('token');
     const currentUser = useSelector((state) => state.user.currentUser);
     const loggedIn = !!currentUser || !!token;
@@ -51,26 +53,13 @@ const MainPage = () => {
         }
     }, [userFromServer, currentUser, dispatch, navigate]);
 
-    const { data: cars = [], isLoading: carsLoading, isError, refetch } = useGetAllCarsQuery();
-
-    // עדכון אוטומטי של הרכבים כל 5 שניות
-    useEffect(() => {
-        const interval = setInterval(() => {
-            refetch();
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [refetch]);
-const handleLogout = () => {
-    // 1. ניקוי הסטייט ב-Redux (משנה את currentUser ל-null)
-    dispatch(setUser(null)); 
-    
-    // 2. מחיקת הטוקן מהאחסון המקומי
-    localStorage.removeItem('token');
-    
-    // 3. החזרה לדף הבית
-    setActiveView('home');
-    navigate('/'); 
-};
+    const { data: cars = [], isLoading: carsLoading, isError } = useGetAllCarsQuery();
+    const handleLogout = () => {
+        dispatch(setUser(null)); 
+        localStorage.removeItem('token');
+        setActiveView('home');
+        navigate('/'); 
+    };
     const handleFinalRegistration = async (sigData) => {
         try {
             const finalData = {
@@ -118,9 +107,18 @@ const handleLogout = () => {
             case 'foreign': return <UploadForeignDocuments uploadData={foreignUploadData} setUploadData={setForeignUploadData} onBack={() => setActiveView('upload')} onFinish={() => setActiveView('signature')} />;
             case 'signature': return <Signature onBack={() => setActiveView(userData.isForeignCitizen ? 'foreign' : 'upload')} onComplete={handleFinalRegistration} />;
             case 'profile': return <PersonalArea />; 
-            case 'map': return carsLoading ? <div>טוען רכבים...</div> : <GoogleMapWithClusters carsList={cars} />;
+            case 'map': 
+            return carsLoading ? (
+                <div className="full-page-loader">
+                    <div className="spinner-circle"></div>
+                    <p>מחפש רכבים קרובים...</p>
+                </div>
+            ) : (
+                <GoogleMapWithClusters carsList={cars} />
+            );
             case 'pricing': return <PriceList />;
             case 'orders': return <UserOrders userId={currentUser?.id} />;
+            case 'contact': return <ContactUs />;
             default: return <HomeContent isLoading={carsLoading} isError={isError} cars={cars} onViewPrices={() => setActiveView('pricing')} />;
         }
     };
@@ -137,6 +135,7 @@ const handleLogout = () => {
                 if (loggedIn) setActiveView('orders');
                 else { setRedirectTo('orders'); setActiveView('auth'); }
             }}
+            onContactClick={() => setActiveView('contact')}
             onProfileClick={() => {
                 if (loggedIn) setActiveView('profile');
                 else { setRedirectTo('profile'); setActiveView('auth'); }
@@ -148,20 +147,14 @@ const handleLogout = () => {
         >
             {renderContent()}
 
-            {showSuccessModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 9999 }}>
-                    <style>{`@keyframes fillProgress { from { width: 0%; } to { width: 100%; } }`}</style>
-                    <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '25px', textAlign: 'center', width: '90%', maxWidth: '400px' }}>
-                        <div style={{ width: '90px', height: '90px', borderRadius: '50%', backgroundColor: '#f0fdf4', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '25px', border: '2px solid #4caf50', margin: '0 auto' }}>
-                            <span style={{ color: '#4caf50', fontSize: '50px', fontWeight: 'bold' }}>✓</span>
-                        </div>
-                        <h2 style={{ color: '#6F3293', fontSize: '1.8rem', fontWeight: '800', marginBottom: '20px' }}>נרשמת בהצלחה!</h2>
-                        <div style={{ width: '100%', height: '8px', backgroundColor: '#f3f3f3', borderRadius: '10px', overflow: 'hidden' }}>
-                            <div style={{ width: '100%', height: '100%', backgroundColor: '#FFC107', animation: 'fillProgress 3s linear forwards' }}></div>
-                        </div>
-                    </div>
-                </div>
-            )}
+           {showSuccessModal && (
+        <div className="success-modal-overlay">
+            <div className="success-modal-content">
+                <div className="success-icon-box">✓</div>
+                <h2>נרשמת בהצלחה!</h2>
+            </div>
+        </div>
+)}
         </MainLayout>
     );
 };

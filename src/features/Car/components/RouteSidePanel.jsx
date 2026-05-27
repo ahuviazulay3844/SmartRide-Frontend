@@ -4,7 +4,6 @@ import { useLazyCheckUserOverlapQuery } from "../../Order/redux/orderApi.jsx";
 import "../Style/RouteSidePanel.css";
 
 const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
-  // שליפת ה-ID של המשתמש מה-Store (לפי המבנה ב-MainPage)
   const currentUser = useSelector((state) => state.user.currentUser);
   const loggedInUserId = currentUser?.id || currentUser?.Id;
 
@@ -22,6 +21,7 @@ const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
     initialData?.start ? roundTo5(new Date(initialData.start)) : now
   );
 
+  //if there's an initial end time, use it, otherwise default to 1 hour from now. In both cases, round to nearest 5 minutes
   const [endDateTime, setEndDateTime] = useState(() =>
     initialData?.end
       ? roundTo5(new Date(initialData.end))
@@ -30,14 +30,14 @@ const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [checkOverlap, { isFetching }] = useLazyCheckUserOverlapQuery();
-
+  
   const handleReset = (e) => {
     e.stopPropagation();
     setErrorMessage(null);
     setStartDateTime(now);
     setEndDateTime(new Date(now.getTime() + ONE_HOUR_MS));
   };
-
+  // how many hours and days between start and end, rounding up to the nearest hour and day for pricing purposes (e.g. 1 hour and 10 minutes counts as 2 hours, 25 hours counts as 2 days)
   const { totalDays, remainingHours, remainingMinutes } = useMemo(() => {
     const diffMs = endDateTime - startDateTime;
     const totalMins = Math.max(60, Math.floor(diffMs / 60000));
@@ -65,8 +65,7 @@ const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
 
     if (isStart) {
       setStartDateTime(newDate);
-      
-      // לוגיקה מקורית: הזזת הסיום לפי הדלתא של הדקות
+      //The user changes the pickup time, we will try to maintain the trip duration by moving the drop-off time accordingly, but always make sure the drop-off is no less than an hour from the pickup.
       const minuteDelta = newDate.getMinutes() - startDateTime.getMinutes();
       const candidateEnd = new Date(endDateTime.getTime() + minuteDelta * 60000);
 
@@ -78,14 +77,12 @@ const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
     } else {
       let finalEnd = newDate;
 
-      // --- פתרון לחצות: אם זמן הסיום קטן מההתחלה באותו יום, כנראה התכוונו למחר ---
+      // chazot--
       if (finalEnd.getTime() <= startDateTime.getTime()) {
         finalEnd = new Date(finalEnd.getTime() + ONE_DAY_MS);
       }
-      // --- פתרון לסינכרון דקות: מוודאים שדקות הסיום תואמות לדקות ההתחלה ---
       finalEnd.setMinutes(startDateTime.getMinutes());
 
-      // בדיקה מינימלית של שעה הפרש (כפי שהיה לך)
       if (finalEnd.getTime() < startDateTime.getTime() + ONE_HOUR_MS) {
         setEndDateTime(new Date(startDateTime.getTime() + ONE_HOUR_MS));
       } else {
@@ -93,81 +90,10 @@ const RouteSidePanel = ({ onClose, onConfirm, initialData, selectedCar }) => {
       }
     }
   };
-
-  // const handleDateTimeChange = (isStart, dateVal, timeVal) => {
-  //   const [hours, mins] = timeVal.split(":").map(Number);
-  //   const [y, m, d] = dateVal.split("-").map(Number);
-
-  //   const newDate = roundTo5(new Date(y, m - 1, d, hours, mins));
-
-  //   if (isStart) {
-  //     setStartDateTime(newDate);
-  //     const minuteDelta = newDate.getMinutes() - startDateTime.getMinutes();
-  //     const candidateEnd = new Date(endDateTime.getTime() + minuteDelta * 60000);
-
-  //     if (candidateEnd.getTime() >= newDate.getTime() + ONE_HOUR_MS) {
-  //       setEndDateTime(candidateEnd);
-  //     } else if (newDate.getTime() + ONE_HOUR_MS > endDateTime.getTime()) {
-  //       setEndDateTime(new Date(newDate.getTime() + ONE_HOUR_MS));
-  //     }
-  //   } else {
-  //     if (newDate.getTime() < startDateTime.getTime() + ONE_HOUR_MS) {
-  //       setEndDateTime(new Date(startDateTime.getTime() + ONE_HOUR_MS));
-  //     } else {
-  //       setEndDateTime(newDate);
-  //     }
-  //   }
-  // };
-
-// const handleConfirm = async () => {
-//     setErrorMessage(null);
-//     const actualNow = new Date();
-    
-//     const earliestAllowed = new Date(actualNow.getTime() - 15 * 60000); 
-//     if (startDateTime < earliestAllowed) {
-//         setErrorMessage("❌ הזמן שנבחר עבר. אנא עדכני לשעה קרובה יותר.");
-//         return;
-//     }
-
-//     if (!loggedInUserId) {
-//         setErrorMessage("יש להתחבר למערכת כדי לבצע הזמנה");
-//         return;
-//     }
-
-//     try {
-//         // פונקציית עזר קטנה ששומרת על הזמן המקומי בדיוק כפי שהמשתמש בחר
-//         const toLocalString = (date) => {
-//             const pad = (n) => n.toString().padStart(2, '0');
-//             return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-//         };
-
-//         const res = await checkOverlap({
-//             userId: Number(loggedInUserId), 
-//             start: toLocalString(startDateTime), // שולח למשל 14:00:00 במקום 11:00:00Z
-//             end: toLocalString(endDateTime)
-//         }).unwrap();
-
-//         if (res?.hasOverlap === true || res === true) {
-//             setErrorMessage("❌ יש לך כבר הזמנה קיימת בטווח הזה");
-//             return;
-//         }
-
-//         onConfirm({
-//             start: startDateTime,
-//             end: endDateTime,
-//             selectedCar,
-//         });
-
-//     } catch (err) {
-//         // השארת הלוגיקה שלך - אם הבדיקה נכשלה, ממשיכים
-//         onConfirm({ start: startDateTime, end: endDateTime, selectedCar });
-//     }
-// };
 const handleConfirm = async () => {
     setErrorMessage(null);
     const actualNow = new Date();
     
-    // בדיקה שהזמנה לא בעבר
     const earliestAllowed = new Date(actualNow.getTime() - 15 * 60000); 
     if (startDateTime < earliestAllowed) {
         setErrorMessage("❌ הזמן שנבחר עבר. אנא עדכן לשעה קרובה יותר.");
@@ -180,13 +106,11 @@ const handleConfirm = async () => {
     }
 
     try {
-        // --- הפונקציה ששולחת את הזמן בדיוק כפי שהוא מופיע במסך (Local) ---
         const toLocalString = (date) => {
             const pad = (n) => n.toString().padStart(2, '0');
             return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
         };
 
-        // שימוש ב-toLocalString במקום ב-toISOString
         const res = await checkOverlap({
             userId: Number(loggedInUserId), 
             start: toLocalString(startDateTime), 
@@ -342,7 +266,6 @@ const handleConfirm = async () => {
             </button>
           </div>
         </div>
-
         <button
           className="submit-btn"
           disabled={isFetching}

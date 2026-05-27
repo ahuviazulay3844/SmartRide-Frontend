@@ -4,7 +4,6 @@ import { userApi } from './userApi';
 const initialState = {
   token: localStorage.getItem('token') || null,
   currentUser: null,
-  // דגל לזיהוי מנהל במצב הראשוני
   isAdmin: false 
 };
 
@@ -20,13 +19,13 @@ const userSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.currentUser = null;
-      state.isAdmin = false; // איפוס הסטטוס ביציאה
+      state.isAdmin = false; 
       localStorage.removeItem('token');
       window.location.reload();
     },
   },
   extraReducers: (builder) => {
-    // מאזין להתחברות מוצלחת
+    // listener for successful login to store token and user data
     builder.addMatcher(
       userApi.endpoints.loginUser.matchFulfilled,
       (state, { payload }) => {
@@ -38,18 +37,18 @@ const userSlice = createSlice({
         
         if (user) {
           state.currentUser = user;
-          // עדכון סטטוס מנהל לפי הנתונים מהשרת
+          // update isAdmin based on userType after login
           state.isAdmin = user.userType === 1 || user.userType === 'Admin';
         }
       }
     );
 
-    // מאזין לשליפת משתמש נוכחי (לטיפול ברענון דף F5)
+    // listener for fetching current user (for handling page refresh F5)
     builder.addMatcher(
       userApi.endpoints.getCurrentUser.matchFulfilled,
       (state, { payload }) => {
         state.currentUser = payload;
-        // וידוא סטטוס מנהל גם לאחר רענון
+        // verify admin status even after refresh
         state.isAdmin = payload?.userType === 1 || payload?.userType === 'Admin';
       }
     );

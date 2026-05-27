@@ -15,7 +15,7 @@ export const carApi = createApi({
     tagTypes: ['Cars'],
     endpoints: (builder) => ({
         
-        // --- Queries (שליפת נתונים) ---
+        // --- Queries  ---
 
     getAllCars: builder.query({
     query: () => "Cars",
@@ -26,23 +26,10 @@ export const carApi = createApi({
 
 }),
 
-
         getCarById: builder.query({
             query: (id) => `Cars/${id}`,
             providesTags: (result, error, id) => [{ type: 'Cars', id }],
         }),
-// getClosestCars: builder.query({
-//     query: ({ lat, lng, start, end }) => {
-
-//         let url = `Cars/closest?lat=${lat}&lng=${lng}`;
-
-//         if (start) url += `&start=${encodeURIComponent(start)}`;
-//         if (end) url += `&end=${encodeURIComponent(end)}`;
-
-//         return url;
-//     },
-//     providesTags: ['Cars'],
-// }),
 getClosestCars: builder.query({
     query: ({ lat, lng, start, end }) => {
         let url = `Cars/closest?lat=${lat}&lng=${lng}`;
@@ -50,7 +37,6 @@ getClosestCars: builder.query({
         if (end) url += `&end=${encodeURIComponent(end)}`;
         return url;
     },
-    // נותן תיוג ספציפי לרשימה כדי שלא כל שינוי קטן יקפיץ את כל האפליקציה
     providesTags: (result) =>
         result
             ? [...result.map(({ id }) => ({ type: 'Cars', id })), { type: 'Cars', id: 'CLOSEST_LIST' }]
@@ -154,15 +140,6 @@ updateFuelLevel: builder.mutation({
             invalidatesTags: ['Cars'],
         }),
 
-        // updateCarStatus: builder.mutation({
-        //     query: ({ id, status }) => ({
-        //         url: `Cars/${id}/status`,
-        //         method: 'PATCH',
-        //         body: JSON.stringify(status),
-        //         headers: { 'Content-Type': 'application/json' },
-        //     }),
-        //     invalidatesTags: ['Cars'],
-        // }),
    updateCarStatus: builder.mutation({
     query: ({ id, status }) => ({
         url: `Cars/${id}/status`,
@@ -187,16 +164,7 @@ updateFuelLevel: builder.mutation({
             }),
             invalidatesTags: ['Cars'],
         }),
-// updateCarLock: builder.mutation({
-//   query: ({ id, isLocked }) => ({
-//     url: `Cars/${id}/toggle-lock`,
-//     method: 'PATCH',
-//     // כאן אנחנו שולחים אובייקט JSON תקין
-//     body: { isLocked: isLocked }, 
-//     headers: { 'Content-Type': 'application/json' },
-//   }),
-//   invalidatesTags: ['Cars'],
-// }),
+
 updateCarLock: builder.mutation({
     query: ({ id, isLocked }) => ({
         url: `Cars/${id}/toggle-lock`,

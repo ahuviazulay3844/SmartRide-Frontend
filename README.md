@@ -1,4 +1,68 @@
-# City Car — ממשק משתמש (Frontend)
+<p align="center">
+  <a href="docs/media/demo.mp4?raw=true"><img src="docs/media/demo.gif" width="820" alt="CityCar demo"></a>
+</p>
+
+<h1 align="center">🚗 CityCar · ממשק המשתמש</h1>
+
+<p align="center">
+  <b>מערכת חכמה להשכרת רכבים שיתופית בעיר: מוצאים רכב קרוב על המפה, מזמינים, פותחים מהאפליקציה ונוסעים.</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white">
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white">
+  <img src="https://img.shields.io/badge/Redux_Toolkit-RTK_Query-764ABC?logo=redux&logoColor=white">
+  <img src="https://img.shields.io/badge/Google_Maps-Clustering-4285F4?logo=googlemaps&logoColor=white">
+  <img src="https://img.shields.io/badge/MUI-UI-007FFF?logo=mui&logoColor=white">
+</p>
+
+<p align="center">
+  🎬 <a href="docs/media/demo.mp4?raw=true"><b>לצפייה בסרטון ההדגמה המלא (2:34, עם קריינות)</b></a>
+</p>
+
+---
+
+## 🧩 המערכת המלאה: שלושה חלקים שעובדים יחד
+
+| חלק | תפקיד | ריפו |
+|------|--------|------|
+| 💻 **צד לקוח** | React: מפה, הזמנות, נסיעות, פאנל ניהול | **הריפו הזה** |
+| ⚙️ **שרת API** | ASP.NET Core 9 · לוגיקה עסקית · SQL Server | [SmartRide-Backend](https://github.com/ahuviazulay3844/SmartRide-Backend) |
+| ⏱️ **Worker** | שירות Windows שסורק את ההזמנות כל 60 שניות | [SmartRide-Worker](https://github.com/ahuviazulay3844/SmartRide-Worker) |
+
+---
+
+## ✨ מה רואים במערכת
+
+<table>
+<tr>
+<td width="50%" align="center"><img src="docs/media/map.jpg"><br><b>📍 מפה חיה עם אשכולות</b><br>מיקום המשתמש + מרחק לכל רכב (Haversine)</td>
+<td width="50%" align="center"><img src="docs/media/cars.jpg"><br><b>🚘 בחירת רכב חכמה</b><br>ממוין לפי מרחק · דלק · מושבים · זמינות שמתרעננת כל 3 שניות</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/media/live.jpg"><br><b>⚡ זמינות בזמן אמת</b><br>שני משתמשים באותו רגע: הרכב הופך ל"תפוס" מיד, בלי רענון</td>
+<td align="center"><img src="docs/media/flat.jpg"><br><b>🛞 פנצ'ר ← רכב חלופי</b><br>שאלון מצב רכב, הצעת הרכב הקרוב ביותר + שעה במתנה</td>
+</tr>
+<tr>
+<td align="center"><img src="docs/media/register.jpg"><br><b>📝 הרשמה בשבעה שלבים</b><br>אימות מייל (OTP) · רישיון · תשלום · מסמכים · חתימה דיגיטלית</td>
+<td align="center"><img src="docs/media/admin.jpg"><br><b>🛠️ פאנל ניהול</b><br>צי רכבים חי · משתמשים · יומן נסיעות והכנסות</td>
+</tr>
+</table>
+
+<p align="center"><img src="docs/media/features.jpg" width="820"></p>
+
+### 🚀 הרצה מהירה
+
+```bash
+npm install
+npm run dev          # http://localhost:5173
+```
+
+צריך קובץ `.env` עם `VITE_GOOGLE_MAPS_API_KEY`, ושרת ה-API רץ בכתובת `https://localhost:7034` ([SmartRide-Backend](https://github.com/ahuviazulay3844/SmartRide-Backend)).
+
+---
+
+## 📚 תיעוד טכני מפורט
 
 ## מבוא
 

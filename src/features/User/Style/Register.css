@@ -14,38 +14,44 @@
   font-size: 28px;
 }
 
-.flow-wrapper {
+.register-page .flow-wrapper {
   position: relative;
-  width: 100%;
-  max-width: 500px;
+  width: 500px;
   height: 650px;
   margin: 0 auto;
 }
 
-.flow-line {
+.register-page .flow-line {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 500px;
+  height: 650px;
   z-index: 1;
 }
 
-.step-item {
+/* circles sit exactly on the ribbon's turns (centers alternate 320 / 180).
+   Scoped to .register-page so the home page's .step-item rules don't leak in. */
+.register-page .step-item {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  width: 100%;
-  justify-content: center;
+  width: auto;
+  padding: 0;
+  justify-content: flex-start;
+  transform: none;
   z-index: 2; /* מעל הקו */
 }
 
-.s1 { top: 20px; flex-direction: row-reverse; }
-.s2 { top: 245px; flex-direction: row; }
-.s3 { top: 420px; flex-direction: row-reverse; }
-.s4 { top: 595px; flex-direction: row; }
+/* circle on the right, text to its left */
+.register-page .s1, .register-page .s3 { left: auto; right: 128px; flex-direction: row; }
+/* circle on the left, text to its right */
+.register-page .s2, .register-page .s4 { right: auto; left: 128px; flex-direction: row-reverse; }
+
+.register-page .s1 { top: 18px; }
+.register-page .s2 { top: 193px; }
+.register-page .s3 { top: 368px; }
+.register-page .s4 { top: 543px; }
 
 .circle-wrap {
   width: 105px;

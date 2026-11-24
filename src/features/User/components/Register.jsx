@@ -12,32 +12,33 @@ const Register = ({ onStepClick, isForeign }) => {
       <h2 className="title">תהליך הרשמה</h2>
 
       <div className="flow-wrapper">
-        <svg className="flow-line" viewBox="0 0 400 650" preserveAspectRatio="none">
+        <svg className="flow-line" viewBox="0 0 500 650">
           <defs>
             <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6b3fa0" />
-              <stop offset="100%" stopColor="#d7c3f3" />
+              <stop offset="0%" stopColor="#5b2a8f" />
+              <stop offset="45%" stopColor="#9a74c9" />
+              <stop offset="100%" stopColor="#efe6fb" />
             </linearGradient>
-            <mask id="hole">
-              <rect width="100%" height="100%" fill="white" />
-              <circle cx="200" cy="70" r="55" fill="black" />
-              <circle cx="200" cy="245" r="55" fill="black" />
-              <circle cx="200" cy="420" r="55" fill="black" />
-              <circle cx="200" cy="595" r="55" fill="black" />
-            </mask>
           </defs>
 
+          {/* one continuous S-shaped ribbon passing through the four circles */}
           <path
-            d="M200 70 
-               C 400 150, 0 180, 200 245 
-               C 400 325, 0 355, 200 420 
-               C 400 500, 0 530, 200 595"
+            d="M320 70
+               C 320 170, 180 145, 180 245
+               C 180 345, 320 320, 320 420
+               C 320 520, 180 495, 180 595"
             stroke="url(#grad)"
-            strokeWidth="70"
+            strokeWidth="78"
             fill="none"
             strokeLinecap="round"
-            mask="url(#hole)"
           />
+
+          {/* small direction arrows along the ribbon */}
+          <g stroke="white" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.85">
+            <path d="M262 150 L 236 178 M236 178 L 236 160 M236 178 L 254 178" />
+            <path d="M238 325 L 264 353 M264 353 L 264 335 M264 353 L 246 353" />
+            <path d="M262 500 L 236 528 M236 528 L 236 510 M236 528 L 254 528" />
+          </g>
         </svg>
          {/* Personal details */}
         <div className="step-item s1 clickable" onClick={() => onStepClick('questions')}>

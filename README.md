@@ -4,14 +4,6 @@
   <b>מערכת חכמה להשכרת רכבים שיתופית בעיר: מוצאים רכב קרוב על המפה, מזמינים, פותחים מהאפליקציה ונוסעים.</b>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white">
-  <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white">
-  <img src="https://img.shields.io/badge/Redux_Toolkit-RTK_Query-764ABC?logo=redux&logoColor=white">
-  <img src="https://img.shields.io/badge/Google_Maps-Clustering-4285F4?logo=googlemaps&logoColor=white">
-  <img src="https://img.shields.io/badge/MUI-UI-007FFF?logo=mui&logoColor=white">
-</p>
-
 <h3 align="center">🎬 סרטון הדגמה (2:34, עם קריינות)</h3>
 
 https://github.com/user-attachments/assets/ef0d1e1b-c8a2-41bc-8382-23eefb83d530
